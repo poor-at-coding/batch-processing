@@ -1,0 +1,32 @@
+steps:
+  #build docker container
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [ 'build', '-t', 'gcr.io/melodic-bolt-334412/batch-processing-app', '.']
+
+  #push container to container registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [ 'push', 'gcr.io/melodic-bolt-334412/batch-processing-app']
+
+  #deploy to cloud run
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'cloudrunservice'
+      - '--image'
+      - 'gcr.io/melodic-bolt-334412/batch-processing-app'
+      - '--region'
+      - 'us-central1'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+images:
+  - 'gcr.io/melodic-bolt-334412/batch-processing-app'
+
+#  - id: push image
+#    name: 'gcr.io/cloud-builders/docker'
+#    args: [ 'push', 'gcr.io/melodic-bolt-334412/batch-processing:1.11-SNAPSHOT' ]
+
+options:
+  logging: CLOUD_LOGGING_ONLY
